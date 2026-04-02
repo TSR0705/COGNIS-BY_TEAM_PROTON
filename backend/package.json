@@ -1,0 +1,17 @@
+{
+  "name": "cognis-proton-backend",
+  "version": "1.0.0",
+  "description": "Backend for COGNIS PROTON hackathon project",
+  "main": "src/app.js",
+  "scripts": {
+    "dev": "node src/app.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "mongoose": "^8.0.3",
+    "axios": "^1.6.2",
+    "uuid": "^9.0.1"
+  }
+}
