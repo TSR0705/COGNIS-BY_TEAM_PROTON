@@ -1,7 +1,7 @@
-const axios = require('axios');
+const Alpaca = require('@alpacahq/alpaca-trade-api');
 
 /**
- * Execute trade action via Alpaca API
+ * Execute trade action via Alpaca Paper Trading API
  * @param {Object} request - Request object with action details
  * @param {Object} enforcementResult - Enforcement decision result
  * @returns {Object} Execution result
@@ -39,22 +39,17 @@ async function executeTrade(request, enforcementResult) {
     };
   }
   
-  if (typeof action.amount !== 'number') {
+  if (typeof action.amount !== 'number' || action.amount <= 0) {
     return {
       request_id,
       timestamp,
       status: 'failed',
-      error: 'Invalid trade action: amount must be a number'
+      error: 'Invalid trade action: amount must be a positive number'
     };
   }
-  
-  // ALPACA CONFIG
-  const BASE_URL = 'https://paper-api.alpaca.markets/v2/orders';
-  const API_KEY = process.env.ALPACA_API_KEY;
-  const API_SECRET = process.env.ALPACA_API_SECRET;
-  
-  // Check API credentials
-  if (!API_KEY || !API_SECRET) {
+
+  // VALIDATE ENVIRONMENT VARIABLES
+  if (!process.env.ALPACA_API_KEY || !process.env.ALPACA_SECRET_KEY) {
     return {
       request_id,
       timestamp,
@@ -62,46 +57,97 @@ async function executeTrade(request, enforcementResult) {
       error: 'Alpaca API credentials not configured'
     };
   }
-  
-  // BUILD ORDER PAYLOAD
-  const orderPayload = {
-    symbol: action.asset.toUpperCase(),
-    qty: action.amount,
-    side: 'buy',
-    type: 'market',
-    time_in_force: 'day',
-    client_order_id: request_id
-  };
-  
+
   try {
-    // SEND REQUEST
-    const response = await axios.post(BASE_URL, orderPayload, {
-      headers: {
-        'APCA-API-KEY-ID': API_KEY,
-        'APCA-API-SECRET-KEY': API_SECRET,
-        'Content-Type': 'application/json'
-      }
+    // INITIALIZE ALPACA CLIENT
+    const alpaca = new Alpaca({
+      keyId: process.env.ALPACA_API_KEY,
+      secretKey: process.env.ALPACA_SECRET_KEY,
+      paper: true,
+      baseUrl: process.env.ALPACA_BASE_URL || 'https://paper-api.alpaca.markets'
     });
+
+    // STEP 1: CHECK MARKET CLOCK
+    const clock = await alpaca.getClock();
     
-    // HANDLE SUCCESS
+    if (!clock.is_open) {
+      return {
+        request_id,
+        timestamp,
+        status: 'failed',
+        error: 'Market is closed',
+        details: {
+          next_open: clock.next_open,
+          next_close: clock.next_close
+        }
+      };
+    }
+
+    // STEP 2: FETCH ACCOUNT DETAILS
+    const account = await alpaca.getAccount();
+    
+    const buyingPower = parseFloat(account.buying_power);
+    
+    // STEP 3: GET CURRENT PRICE (ESTIMATE)
+    let estimatedCost = 0;
+    try {
+      const latestTrade = await alpaca.getLatestTrade(action.asset);
+      const currentPrice = latestTrade.Price;
+      estimatedCost = currentPrice * action.amount;
+    } catch (priceError) {
+      // If we can't get price, proceed anyway (Alpaca will validate)
+      console.warn(`Could not fetch price for ${action.asset}:`, priceError.message);
+    }
+
+    // STEP 4: VALIDATE BUYING POWER
+    if (estimatedCost > 0 && buyingPower < estimatedCost) {
+      return {
+        request_id,
+        timestamp,
+        status: 'failed',
+        error: 'Insufficient buying power',
+        details: {
+          required: estimatedCost.toFixed(2),
+          available: buyingPower.toFixed(2),
+          asset: action.asset,
+          quantity: action.amount
+        }
+      };
+    }
+
+    // STEP 5: PLACE REAL ORDER
+    const order = await alpaca.createOrder({
+      symbol: action.asset,
+      qty: action.amount,
+      side: 'buy',
+      type: 'market',
+      time_in_force: 'day'
+    });
+
+    // STEP 6: RETURN SUCCESS
     return {
       request_id,
       timestamp,
       status: 'success',
-      order_id: response.data.id,
+      order_id: order.id,
+      alpaca_status: order.status,
+      filled_qty: order.filled_qty || 0,
       asset: action.asset,
       amount: action.amount,
-      alpaca_status: response.data.status
+      submitted_at: order.submitted_at,
+      message: 'Order submitted successfully to Alpaca'
     };
-    
+
   } catch (error) {
-    // HANDLE ERROR (FAIL SAFE)
+    // STEP 7: HANDLE ALL ERRORS GRACEFULLY
+    console.error('Alpaca API error:', error.message);
+    
     return {
       request_id,
       timestamp,
       status: 'failed',
       error: 'Alpaca API error',
-      details: error.message
+      details: error.message || 'Unknown error occurred'
     };
   }
 }

@@ -1,0 +1,82 @@
+{
+  "policy_version": "v1.0",
+  "evaluation_strategy": "deny-overrides",
+  "default_decision": "deny",
+  "rules": [
+    {
+      "id": "DENY_IF_INTENT_INVALID",
+      "type": "security",
+      "priority": 1,
+      "description": "Block execution if intent is ambiguous or unsafe",
+      "action": "any",
+      "effect": "deny",
+      "conditions": [
+        {
+          "field": "intent.status",
+          "op": "in",
+          "value": ["ambiguous", "unsafe"]
+        }
+      ]
+    },
+    {
+      "id": "DENY_TRADE_IF_NOT_ALLOWED",
+      "type": "security",
+      "priority": 2,
+      "description": "Block trade if intent does not permit it",
+      "action": "trade",
+      "effect": "deny",
+      "conditions": [
+        {
+          "field": "intent.allowed_actions",
+          "op": "not_includes",
+          "value": "trade"
+        }
+      ]
+    },
+    {
+      "id": "DENY_IF_MARKET_CLOSED",
+      "type": "constraint",
+      "priority": 3,
+      "description": "Block trade if market is closed",
+      "action": "trade",
+      "effect": "deny",
+      "enabled": false,
+      "conditions": [
+        {
+          "field": "market.is_open",
+          "op": "==",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": "ALLOW_TRADE_WITH_LIMIT",
+      "type": "constraint",
+      "priority": 10,
+      "description": "Allow trade within asset and amount constraints",
+      "action": "trade",
+      "effect": "allow",
+      "conditions": [
+        {
+          "field": "action.asset",
+          "op": "in",
+          "value_from": "intent.constraints.allowed_assets"
+        },
+        {
+          "field": "action.amount",
+          "op": "<=",
+          "value_from": "intent.constraints.max_trade_amount"
+        }
+      ]
+    },
+    {
+      "id": "DEFAULT_DENY",
+      "type": "default",
+      "priority": 999,
+      "description": "Deny all unspecified actions",
+      "action": "any",
+      "effect": "deny",
+      "conditions": []
+    }
+  ]
+}

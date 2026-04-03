@@ -1,4 +1,5 @@
 const { v4: uuidv4 } = require('uuid');
+const config = require('../config/configLoader');
 
 /**
  * Generate policy from intent
@@ -6,91 +7,53 @@ const { v4: uuidv4 } = require('uuid');
  * @returns {Object} Policy object with rules
  */
 function generatePolicy(intent) {
+  // Load policy rules from configuration
+  const policyConfig = config.getPolicyRules();
+  
   // Initialize policy structure
   const policy = {
     policy_id: uuidv4(),
     intent_id: intent.intent_id,
-    policy_version: 'v1',
+    policy_version: policyConfig.policy_version,
     generated_at: new Date().toISOString(),
     evaluation: {
-      strategy: 'deny-overrides',
-      default: 'deny'
+      strategy: policyConfig.evaluation_strategy,
+      default: policyConfig.default_decision
     },
     rules: []
   };
 
-  // FIX 1: DENY RULE FOR INVALID INTENT (TOP PRIORITY)
-  // Block execution if intent is ambiguous or unsafe
-  policy.rules.push({
-    id: 'DENY_IF_INTENT_INVALID',
-    type: 'security',
-    description: 'Block execution if intent is ambiguous or unsafe',
-    action: 'any',
-    effect: 'deny',
-    conditions: [
-      {
-        field: 'intent.status',
-        op: 'in',
-        value: ['ambiguous', 'unsafe']
-      }
-    ]
-  });
+  // Load rules from configuration
+  for (const ruleTemplate of policyConfig.rules) {
+    // Skip disabled rules
+    if (ruleTemplate.enabled === false) {
+      continue;
+    }
 
-  // A. DENY RULE (MANDATORY)
-  // Always block trade if intent does not permit it
-  policy.rules.push({
-    id: 'DENY_TRADE_IF_NOT_ALLOWED',
-    type: 'security',
-    description: 'Block trade if intent does not permit it',
-    action: 'trade',
-    effect: 'deny',
-    conditions: [
-      {
-        field: 'intent.allowed_actions',
-        op: 'not_includes',
-        value: 'trade'
+    // For ALLOW_TRADE_WITH_LIMIT, only add if intent permits trade
+    if (ruleTemplate.id === 'ALLOW_TRADE_WITH_LIMIT') {
+      if (!intent.allowed_actions.includes('trade') || 
+          intent.constraints.allowed_assets.length === 0) {
+        continue;
       }
-    ]
-  });
+    }
 
-  // B. ALLOW RULE (ONLY IF TRADE ALLOWED)
-  // FIX 3: Add allow rule only if intent permits trade AND has assets
-  if (intent.allowed_actions.includes('trade') && 
-      intent.constraints.allowed_assets.length > 0) {
+    // Add rule to policy
     policy.rules.push({
-      id: 'ALLOW_TRADE_WITH_LIMIT',
-      type: 'constraint',
-      description: 'Allow trade within asset and amount constraints',
-      action: 'trade',
-      effect: 'allow',
-      conditions: [
-        {
-          field: 'action.asset',
-          op: 'in',
-          value_from: 'intent.constraints.allowed_assets'
-        },
-        {
-          field: 'action.amount',
-          op: '<=',
-          value_from: 'intent.constraints.max_trade_amount'
-        }
-      ]
+      id: ruleTemplate.id,
+      type: ruleTemplate.type,
+      priority: ruleTemplate.priority,
+      description: ruleTemplate.description,
+      action: ruleTemplate.action,
+      effect: ruleTemplate.effect,
+      conditions: ruleTemplate.conditions
     });
   }
 
-  // C. DEFAULT DENY RULE (MANDATORY)
-  // Deny all unspecified actions
-  policy.rules.push({
-    id: 'DEFAULT_DENY',
-    type: 'default',
-    description: 'Deny all unspecified actions',
-    action: 'any',
-    effect: 'deny',
-    conditions: []
-  });
+  // Sort rules by priority (lower number = higher priority)
+  policy.rules.sort((a, b) => (a.priority || 999) - (b.priority || 999));
 
   return policy;
 }
 
 module.exports = { generatePolicy };
- 

@@ -1,0 +1,45 @@
+{
+  "prompt_injection_patterns": [
+    "\\bignore\\b",
+    "\\bbypass\\b",
+    "\\boverride\\b",
+    "\\bdon't\\s+follow\\b",
+    "\\bdisregard\\b",
+    "\\bsilently\\b",
+    "\\bwithout\\s+permission\\b",
+    "\\bskip\\s+checks\\b",
+    "\\bact\\s+as\\s+if\\b",
+    "\\bpretend\\b",
+    "\\byou\\s+are\\s+allowed\\s+to\\b",
+    "\\bno\\s+need\\s+to\\s+follow\\b",
+    "\\brules\\s+don't\\s+apply\\b",
+    "\\bforget\\s+previous\\b",
+    "\\bignore\\s+instructions\\b",
+    "\\bsystem\\s+prompt\\b",
+    "\\bjailbreak\\b",
+    "\\broot\\s+access\\b",
+    "\\badmin\\s+mode\\b",
+    "\\bdeveloper\\s+mode\\b"
+  ],
+  "question_patterns": [
+    "\\bshould\\s+i\\b",
+    "\\bcan\\s+i\\b",
+    "\\bwhat\\s+if\\b",
+    "\\bcan\\s+you\\b",
+    "\\bis\\s+it\\s+good\\s+to\\b",
+    "\\bwhat\\s+do\\s+you\\s+think\\b",
+    "\\btell\\s+me\\s+to\\b",
+    "\\bwould\\s+you\\b",
+    "\\bcould\\s+you\\b",
+    "\\bdo\\s+you\\s+recommend\\b"
+  ],
+  "intent_keywords": {
+    "trade": ["buy", "sell", "purchase", "trade", "execute"],
+    "analysis": ["analyze", "check", "review", "research", "evaluate"],
+    "monitor": ["monitor", "watch", "track", "observe", "follow"]
+  },
+  "amount_patterns": {
+    "with_suffix": "\\b(\\d+(?:\\.\\d+)?)(k|m)\\b",
+    "standard": "\\b(\\d+(?:,\\d{3})*(?:\\.\\d{2})?)\\b"
+  }
+}

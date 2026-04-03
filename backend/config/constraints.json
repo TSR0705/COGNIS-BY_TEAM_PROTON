@@ -1,0 +1,19 @@
+{
+  "system": {
+    "max_trade_amount": 1000,
+    "max_trade_amount_description": "Maximum number of shares per trade (system enforced)",
+    "max_portfolio_exposure": 50000,
+    "max_portfolio_exposure_description": "Maximum dollar value exposure per asset"
+  },
+  "market": {
+    "allowed_asset_classes": ["stocks", "etf"],
+    "blocked_asset_classes": ["crypto", "forex", "options"],
+    "market_hours_only": true,
+    "market_hours_description": "Only allow trades during market hours (9:30 AM - 4:00 PM ET)"
+  },
+  "rate_limits": {
+    "max_trades_per_day": 100,
+    "max_trades_per_hour": 20,
+    "max_trades_per_minute": 5
+  }
+}

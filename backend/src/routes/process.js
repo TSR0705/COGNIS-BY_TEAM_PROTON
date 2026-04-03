@@ -48,7 +48,7 @@ router.post('/process', async (req, res) => {
     action = req.body.action || intent.action || {
       type: intent.intent_type === 'trade' ? 'trade' : 'none',
       asset: intent.scope?.[0] || null,
-      amount: intent.amount || 0
+      amount: intent.constraints?.max_trade_amount || 0
     };
     
     // 5.4: Enforce Policy
@@ -136,7 +136,8 @@ router.post('/process', async (req, res) => {
       intent_type: intent?.intent_type,
       status: intent?.status,
       scope: intent?.scope,
-      allowed_actions: intent?.allowed_actions
+      allowed_actions: intent?.allowed_actions,
+      constraints: intent?.constraints
     },
     action,
     enforcement: enforcementResult ? {
@@ -148,7 +149,8 @@ router.post('/process', async (req, res) => {
       status: executionResult.status,
       order_id: executionResult.order_id,
       message: executionResult.message,
-      error: executionResult.error
+      error: executionResult.error,
+      details: executionResult.details
     } : undefined
   };
   
