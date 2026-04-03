@@ -73,7 +73,10 @@ async function saveLog(data) {
       // Timing
       timing: data.timing ? {
         total_ms: data.timing.total_ms
-      } : undefined
+      } : undefined,
+      
+      // Agent (OpenClaw)
+      agent: data.agent || undefined
     };
     
     // Save to MongoDB

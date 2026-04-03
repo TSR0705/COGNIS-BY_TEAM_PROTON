@@ -86,6 +86,11 @@ const logSchema = new mongoose.Schema({
   // Performance metrics
   timing: {
     total_ms: Number
+  },
+  
+  // Agent data (OpenClaw)
+  agent: {
+    type: mongoose.Schema.Types.Mixed
   }
 }, {
   timestamps: true,

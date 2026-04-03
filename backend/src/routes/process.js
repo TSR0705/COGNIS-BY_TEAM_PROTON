@@ -32,6 +32,7 @@ router.post('/process', async (req, res) => {
   // STEP 4: EXTRACT RAW INPUT
   const raw_input = req.body.input;
   const source = req.body.source || 'api';
+  const agentData = req.body.agent || null;
   
   // STEP 5: PIPELINE EXECUTION
   let intent, policy, action, enforcementResult, executionResult;
@@ -100,7 +101,8 @@ router.post('/process', async (req, res) => {
       action,
       enforcement: enforcementResult,
       execution: executionResult,
-      timing: { total_ms }
+      timing: { total_ms },
+      agent: agentData
     });
   } catch (logError) {
     // Logging errors should not affect response

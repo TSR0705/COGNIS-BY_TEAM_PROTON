@@ -38,7 +38,7 @@ async function process_request(input) {
 
     // STEP 2: CALL BACKEND
     const response = await axios.post(
-      'http://localhost:5000/process',
+      'http://localhost:5000/api/process',
       {
         input: user_input,
         action: proposed_action,
