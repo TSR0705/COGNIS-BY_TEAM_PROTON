@@ -1,6 +1,6 @@
 # OpenClaw Integration Documentation
 
-This folder contains all documentation for the OpenClaw integration with COGNIS backend.
+This folder contains essential documentation for the OpenClaw integration with COGNIS backend.
 
 ---
 
@@ -8,62 +8,38 @@ This folder contains all documentation for the OpenClaw integration with COGNIS 
 
 ### Getting Started
 
-1. **[HOW-TO-VERIFY-OPENCLAW-CONNECTION.md](./HOW-TO-VERIFY-OPENCLAW-CONNECTION.md)**
+1. **[00-START-HERE.md](./00-START-HERE.md)** ⭐
+   - Entry point for all documentation
+   - Quick navigation guide
+   - **START HERE**
+
+2. **[HOW-TO-VERIFY-OPENCLAW-CONNECTION.md](./HOW-TO-VERIFY-OPENCLAW-CONNECTION.md)**
    - Quick verification guide
    - Step-by-step testing instructions
    - Troubleshooting tips
-   - **START HERE** if you want to verify the connection
 
-2. **[AGENTSKILL-INSTALLATION.md](./AGENTSKILL-INSTALLATION.md)**
+3. **[AGENTSKILL-INSTALLATION.md](./AGENTSKILL-INSTALLATION.md)**
    - Complete installation guide
    - File structure explanation
    - Manual testing commands
-   - Troubleshooting section
 
-### Testing & Verification
+### Testing & Integration
 
-3. **[TEST-OPENCLAW-AGENT.md](./TEST-OPENCLAW-AGENT.md)**
+4. **[TEST-OPENCLAW-AGENT.md](./TEST-OPENCLAW-AGENT.md)**
    - Agent test scenarios
    - Expected behaviors
    - Security test cases
-   - Verification checklist
-
-4. **[OPENCLAW-VERIFICATION.md](./OPENCLAW-VERIFICATION.md)**
-   - Detailed verification report
-   - Test results (7/11 passing)
-   - Integration architecture diagram
-   - Known issues and status
-
-### Integration Details
 
 5. **[PHASE2-INTEGRATION.md](./PHASE2-INTEGRATION.md)**
    - Phase 2 overview
    - Integration architecture
    - Implementation details
 
-### Legacy Documentation
+### Examples
 
-6. **[PLUGIN-INSTALLATION.md](./PLUGIN-INSTALLATION.md)**
-   - Old plugin approach (deprecated)
-   - Kept for reference
-
-7. **[PLUGIN-READY.md](./PLUGIN-READY.md)**
-   - Old plugin status (deprecated)
-   - Kept for reference
-
-8. **[TOOL-REGISTRATION.md](./TOOL-REGISTRATION.md)**
-   - Old tool registration approach (deprecated)
-   - Kept for reference
-
-### Examples & Reports
-
-9. **[EXAMPLES.md](./EXAMPLES.md)**
+6. **[EXAMPLES.md](./EXAMPLES.md)**
    - Usage examples
    - Sample requests and responses
-
-10. **[OPENCLAW-QA-REPORT.md](./OPENCLAW-QA-REPORT.md)**
-    - QA test results
-    - Integration testing report
 
 ---
 
@@ -92,14 +68,12 @@ Follow instructions in [TEST-OPENCLAW-AGENT.md](./TEST-OPENCLAW-AGENT.md)
 openclaw-skill/
 ├── docs/                                    # All documentation (you are here)
 │   ├── README.md                           # This file
+│   ├── 00-START-HERE.md                    # Entry point
 │   ├── HOW-TO-VERIFY-OPENCLAW-CONNECTION.md
 │   ├── AGENTSKILL-INSTALLATION.md
 │   ├── TEST-OPENCLAW-AGENT.md
-│   ├── OPENCLAW-VERIFICATION.md
 │   ├── PHASE2-INTEGRATION.md
-│   ├── EXAMPLES.md
-│   ├── OPENCLAW-QA-REPORT.md
-│   └── [legacy docs...]
+│   └── EXAMPLES.md
 ├── process_request.js                      # Core function
 ├── process_request_cli.js                  # CLI wrapper
 ├── verify-openclaw-connection.js           # Verification script
@@ -124,6 +98,7 @@ openclaw-skill/
 ## 📖 Recommended Reading Order
 
 1. **First Time Setup:**
+   - 00-START-HERE.md
    - HOW-TO-VERIFY-OPENCLAW-CONNECTION.md
    - AGENTSKILL-INSTALLATION.md
 
@@ -131,15 +106,9 @@ openclaw-skill/
    - TEST-OPENCLAW-AGENT.md
    - Run `verify-openclaw-connection.js`
 
-3. **Troubleshooting:**
-   - OPENCLAW-VERIFICATION.md
-   - Check backend logs
-   - Check OpenClaw logs
-
-4. **Deep Dive:**
+3. **Deep Dive:**
    - PHASE2-INTEGRATION.md
    - EXAMPLES.md
-   - OPENCLAW-QA-REPORT.md
 
 ---
 
@@ -153,17 +122,18 @@ openclaw-skill/
 
 ## 💡 Need Help?
 
-1. Check [HOW-TO-VERIFY-OPENCLAW-CONNECTION.md](./HOW-TO-VERIFY-OPENCLAW-CONNECTION.md)
+1. Check [00-START-HERE.md](./00-START-HERE.md)
 2. Run verification script: `node ../verify-openclaw-connection.js`
 3. Check backend logs
-4. Review [OPENCLAW-VERIFICATION.md](./OPENCLAW-VERIFICATION.md) for detailed status
+4. Review [HOW-TO-VERIFY-OPENCLAW-CONNECTION.md](./HOW-TO-VERIFY-OPENCLAW-CONNECTION.md)
 
 ---
 
 ## 📝 Notes
 
-- All documentation is now organized in this folder
-- Legacy documentation (plugin approach) is kept for reference
+- All essential documentation is in this folder
+- Legacy/redundant documentation has been removed
 - Current approach uses AgentSkills (SKILL.md based)
 - Backend must be running on port 5000 for integration to work
+
 
