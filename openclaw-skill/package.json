@@ -1,8 +1,11 @@
 {
-  "name": "cognis-openclaw-skill",
+  "name": "process-request-skill",
   "version": "1.0.0",
-  "description": "OpenClaw plugin for COGNIS backend integration",
-  "main": "index.js",
+  "description": "OpenClaw AgentSkill for COGNIS backend integration",
+  "main": "process_request.js",
+  "bin": {
+    "process-request": "./process_request_cli.js"
+  },
   "scripts": {
     "test": "node test-skill.js"
   },
