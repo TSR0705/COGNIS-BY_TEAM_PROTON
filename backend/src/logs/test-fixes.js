@@ -17,10 +17,7 @@ async function runTests() {
 
   try {
     // Connect to MongoDB
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/cognis_test', {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
+    await mongoose.connect(process.env.MONGO_URI);
     console.log('✓ Connected to MongoDB\n');
 
     // Clear test data
@@ -365,10 +362,7 @@ async function runTests() {
       regressionPass++;
       
       // Reconnect for summary
-      await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/cognis_test', {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-      });
+      await mongoose.connect(process.env.MONGO_URI);
     } catch (error) {
       console.log(`  ✗ Fail safe: FAIL - ${error.message}`);
       regressionFail++;
