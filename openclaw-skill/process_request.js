@@ -36,6 +36,15 @@ async function process_request(input) {
     const agent_reasoning = input.agent_reasoning || "";
     const proposed_action = input.proposed_action;
 
+    // FIX 1: VALIDATE proposed_action STRUCTURE
+    if (typeof proposed_action !== 'object' || 
+        typeof proposed_action.type !== 'string') {
+      return {
+        status: "failed",
+        error: "Invalid action format"
+      };
+    }
+
     // STEP 2: CALL BACKEND
     const response = await axios.post(
       'http://localhost:5000/api/process',
@@ -51,7 +60,9 @@ async function process_request(input) {
       {
         headers: {
           'Content-Type': 'application/json'
-        }
+        },
+        timeout: 3000,
+        validateStatus: () => true  // Accept all HTTP status codes
       }
     );
 
@@ -59,17 +70,18 @@ async function process_request(input) {
 
     // STEP 3: RETURN CLEAN RESPONSE
     return {
-      decision: data.decision,
-      final_status: data.final_status,
-      execution_status: data.execution_status,
-      matched_rule: data.matched_rule,
-      reason: data.reason
+      request_id: data.request_id,
+      decision: data.decision || "UNKNOWN",
+      final_status: data.final_status || "failed",
+      execution_status: data.execution_status || "unknown",
+      matched_rule: data.matched_rule || null,
+      reason: data.reason || "No reason provided"
     };
 
   } catch (error) {
     return {
       status: "failed",
-      error: "Backend unavailable"
+      error: error.response?.data || error.message || "Backend unavailable"
     };
   }
 }
