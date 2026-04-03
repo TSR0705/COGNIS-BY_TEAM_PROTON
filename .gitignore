@@ -8,9 +8,10 @@ package-lock.json
 .env.*.local
 
 # Logs
-logs/
 *.log
 npm-debug.log*
+# Ignore log files but not src/logs/ directory
+!backend/src/logs/
 
 # Build outputs
 .next/
