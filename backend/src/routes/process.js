@@ -95,7 +95,7 @@ router.post('/process', async (req, res) => {
       request_id,
       timestamp,
       source,
-      input: { raw_input },
+      raw_input,
       intent,
       policy,
       action,
@@ -152,11 +152,8 @@ router.post('/process', async (req, res) => {
     } : undefined
   };
   
-  // Set appropriate HTTP status code
-  const httpStatus = 
-    final_status === 'allowed' ? 200 :
-    final_status === 'blocked' ? 403 :
-    200;
+  // Set appropriate HTTP status code (always 200 for successful processing)
+  const httpStatus = 200;
   
   res.status(httpStatus).json(response);
 });

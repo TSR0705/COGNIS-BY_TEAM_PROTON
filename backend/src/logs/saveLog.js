@@ -38,9 +38,7 @@ async function saveLog(data) {
       matched_rule: data.enforcement?.matched_rule,
       
       // Input
-      input: data.input ? {
-        raw_input: (data.input?.raw_input || data.input || "").toString().slice(0, 500)
-      } : undefined,
+      raw_input: (data.raw_input || "").toString().slice(0, 500),
       
       // Intent
       intent: data.intent,
