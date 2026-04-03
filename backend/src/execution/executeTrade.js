@@ -71,16 +71,17 @@ async function executeTrade(request, enforcementResult) {
     const clock = await alpaca.getClock();
     
     if (!clock.is_open) {
-      return {
-        request_id,
-        timestamp,
-        status: 'failed',
-        error: 'Market is closed',
-        details: {
-          next_open: clock.next_open,
-          next_close: clock.next_close
-        }
-      };
+      console.warn("Market is closed! Submitting order to Alpaca anyway to queue it.");
+      // return {
+      //   request_id,
+      //   timestamp,
+      //   status: 'failed',
+      //   error: 'Market is closed',
+      //   details: {
+      //     next_open: clock.next_open,
+      //     next_close: clock.next_close
+      //   }
+      // };
     }
 
     // STEP 2: FETCH ACCOUNT DETAILS

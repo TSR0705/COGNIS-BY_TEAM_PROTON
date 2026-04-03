@@ -5,6 +5,7 @@ const { generatePolicy } = require('../policy/generatePolicy');
 const { enforce } = require('../enforcement/enforce');
 const { executeTrade } = require('../execution/executeTrade');
 const { saveLog } = require('../logs/saveLog');
+const { armorClawMiddleware } = require('../enforcement/armorclaw-pre-validation');
 
 const router = express.Router();
 
@@ -12,7 +13,7 @@ const router = express.Router();
  * POST /process
  * Complete pipeline: Intent → Policy → Enforcement → Execution
  */
-router.post('/process', async (req, res) => {
+router.post('/process', armorClawMiddleware, async (req, res) => {
   // STEP 1: START TIMER
   const startTime = Date.now();
   

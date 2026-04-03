@@ -14,7 +14,7 @@ function extractIntent(userInput) {
 
   const SYSTEM_MAX_AMOUNT = constraints.system.max_trade_amount;
   const stockMap = stockMappings.stock_name_to_ticker;
-  const injectionPatterns = securityPatterns.prompt_injection_patterns.map(p => new RegExp(p, 'i'));
+  // ArmorClaw handles injection patterns now, backend only uses question patterns
   const questionPatterns = securityPatterns.question_patterns.map(p => new RegExp(p, 'i'));
   const intentKeywords = securityPatterns.intent_keywords;
 
@@ -70,7 +70,18 @@ function extractIntent(userInput) {
   
   // Filter out stock names that will be mapped
   const stockNameValues = Object.keys(stockMap).map(k => k.toUpperCase());
-  const filteredTickers = tickers.filter(t => !stockNameValues.includes(t.toUpperCase()));
+  
+  // Filter out action keywords that might be typed in ALL CAPS (e.g., 'BUY')
+  const allKeywords = [
+    ...intentKeywords.trade,
+    ...intentKeywords.analysis,
+    ...intentKeywords.monitor
+  ].map(k => k.toUpperCase());
+
+  const filteredTickers = tickers.filter(t => {
+    const upperT = t.toUpperCase();
+    return !stockNameValues.includes(upperT) && !allKeywords.includes(upperT);
+  });
   
   intent.scope = [...new Set(filteredTickers)];
   
@@ -149,14 +160,8 @@ function extractIntent(userInput) {
   }
   intent.constraints.allowed_assets = intent.scope;
 
-  // G. Detect Prompt Injection
-  for (const pattern of injectionPatterns) {
-    if (pattern.test(normalized)) {
-      intent.signals.prompt_injection = true;
-      break;
-    }
-  }
-
+  // G. Prompt injection handling moved to ArmorClaw Pre-Validation Layer
+  
   // H. Detect Ambiguity
   if (intent.intent_type === 'unknown' || intent.scope.length === 0) {
     intent.signals.ambiguity = true;

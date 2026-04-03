@@ -22,11 +22,12 @@ export default function Home() {
         }),
       });
 
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok && (!data || !data.decision)) {
+        throw new Error(data?.error || `HTTP error! status: ${res.status}`);
       }
 
-      const data = await res.json();
       console.log('Response:', data);
       setResponse(data);
     } catch (error) {

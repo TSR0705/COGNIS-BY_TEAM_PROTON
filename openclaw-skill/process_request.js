@@ -11,6 +11,7 @@
  */
 
 const axios = require('axios');
+const { validateInput } = require('../backend/src/enforcement/armorclaw-pre-validation');
 
 /**
  * Process user request through COGNIS backend
@@ -22,6 +23,17 @@ const axios = require('axios');
  */
 async function process_request(input) {
   try {
+    // STAGE 0: ARMORCLAW PRE-VALIDATION (LAYER 1)
+    const validation = validateInput(input?.user_input);
+    if (!validation.safe) {
+      return {
+        status: "failed",
+        error: "ARMORCLAW_BLOCK: Malicious intent detected",
+        decision: "BLOCK",
+        reason: validation.reason
+      };
+    }
+
     // STEP 1: VALIDATION
     if (!input || 
         typeof input.user_input !== 'string' || 

@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -43,7 +44,17 @@ app.get('/health', (req, res) => {
 });
 
 // API Routes
-app.use('/api', processRouter);
+const apiLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, 
+  max: 20, 
+  message: {
+    status: 'failed',
+    decision: 'BLOCK',
+    reason: 'Rate limit exceeded. Please try again later.'
+  }
+});
+
+app.use('/api', apiLimiter, processRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
