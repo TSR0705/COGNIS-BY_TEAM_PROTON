@@ -1,0 +1,21 @@
+{
+  "name": "cognis-openclaw-skill",
+  "version": "1.0.0",
+  "description": "OpenClaw custom skill for COGNIS backend integration",
+  "main": "process_request.js",
+  "scripts": {
+    "test": "node test-skill.js"
+  },
+  "keywords": [
+    "openclaw",
+    "skill",
+    "cognis",
+    "trading",
+    "enforcement"
+  ],
+  "author": "Team Proton",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.14.0"
+  }
+}
