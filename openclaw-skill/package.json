@@ -1,8 +1,8 @@
 {
   "name": "cognis-openclaw-skill",
   "version": "1.0.0",
-  "description": "OpenClaw custom skill for COGNIS backend integration",
-  "main": "process_request.js",
+  "description": "OpenClaw plugin for COGNIS backend integration",
+  "main": "index.js",
   "scripts": {
     "test": "node test-skill.js"
   },
