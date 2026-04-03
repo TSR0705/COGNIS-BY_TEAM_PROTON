@@ -12,7 +12,7 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 
 const API_URL = 'http://localhost:5000/api/process';
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/cognis';
+const MONGODB_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/cognis';
 
 // Import Log model
 const Log = require('./src/models/Log');

@@ -166,42 +166,30 @@ node test-mongodb-storage.js
 
 ## Manual Verification
 
-### Using MongoDB Shell:
+### Using MongoDB Atlas (Cloud):
 
-```javascript
-// Connect to database
-use cognis
-
-// View recent logs
-db.logs.find().sort({timestamp: -1}).limit(5).pretty()
-
-// Check specific request
-db.logs.findOne({request_id: "your-request-id-here"})
-
-// Verify raw_input is stored
-db.logs.find({raw_input: {$exists: true}}).count()
-
-// Check by decision
-db.logs.find({
-  "enforcement.decision": "ALLOW"
-}).sort({timestamp: -1}).limit(3)
-
-db.logs.find({
-  "enforcement.decision": "BLOCK"
-}).sort({timestamp: -1}).limit(3)
+Your project uses MongoDB Atlas. Connection string is in `.env`:
+```
+MONGO_URI=mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/
 ```
 
-### Using MongoDB Compass:
+**To view logs:**
+1. Go to https://cloud.mongodb.com
+2. Login to your account
+3. Select your cluster
+4. Click "Browse Collections"
+5. Select database (default or cognis)
+6. Select collection: `logs`
+7. Sort by `timestamp` descending
+8. View recent entries
 
-1. Connect to `mongodb://localhost:27017`
-2. Select database: `cognis`
-3. Select collection: `logs`
+### Using MongoDB Compass (Desktop App):
+
+1. Download MongoDB Compass: https://www.mongodb.com/products/compass
+2. Connect using your Atlas URI from `.env`
+3. Navigate to your database → `logs` collection
 4. Sort by `timestamp` descending
-5. Check recent entries have:
-   - ✅ `raw_input` field present
-   - ✅ `intent` object complete
-   - ✅ `enforcement.decision` present
-   - ✅ `execution.status` present
+5. Inspect documents
 
 ---
 
